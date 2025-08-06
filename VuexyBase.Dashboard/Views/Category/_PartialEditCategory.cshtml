@@ -1,0 +1,75 @@
+﻿@using VuexyBase.Application.Application.ViewModels.Category
+@model UpdateCategoryViewModel;
+
+<div id="form-edit">
+
+    <form hx-post="@Url.Action("Edit", "Category")"
+          hx-target="#form-edit"
+          hx-swap="outerHTML"
+          hx-encoding="multipart/form-data"
+          hx-disabled-elt="find button"
+          method="post">
+
+        <input type="hidden" id="edit-id" name="Id" asp-for="@Model.Id" />
+
+        <div class="mb-3">
+            <labe for="edit-name-en" class="form-label">
+                Name (EN) </label>
+                <input type="text" class="form-control" id="edit-name-en" asp-for="@Model.NameEn" />
+
+                @*  <label asp-for="NameEn" class="form-label">Name (EN)</label>
+            <input type="text" asp-for="NameEn" class="form-control" /> *@
+                <span asp-validation-for="NameEn"></span>
+
+        </div>
+
+        <div class="mb-3">
+            <label for="edit-name-ar" class="form-label">Name (AR)</label>
+            <input type="text" class="form-control" id="edit-name-ar" name="NameAr" asp-for="@Model.NameAr" />
+
+            @*      <label class="form-label">Name (AR)</label>
+            <input asp-for="NameAr" type="text" class="form-control add-input" /> *@
+            <span asp-validation-for="NameAr"></span>
+
+        </div>
+
+
+
+        <div class="mb-3">
+            <label for="edit-is-active" class="form-label">Is Active</label>
+            <select id="edit-is-active" name="IsActive" class="form-select" asp-for="@Model.IsActive">
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+            </select>
+            <span asp-validation-for="IsActive"></span>
+
+        </div>
+
+        <div class="mb-4">
+            <label class="form-label fw-semibold text-muted">Current Image</label>
+            <div class="card shadow-sm border-0" style="max-width: 300px;">
+                <img src="" id="edit-Image" class="img-fluid rounded" alt="Old Image">
+            </div>
+        </div>
+
+          <div class="form-group">
+            <label asp-for="Cover" class="form-label mt-4"> new Category Image</label>
+            <input type="file" class="form-control mt-4" asp-for="Cover" placeholder="Name" />
+       
+            <span asp-validation-for="Cover" class="text-danger d-block mt-4"> </span>
+        </div>
+
+       
+
+    
+
+
+        <button type="submit" class="btn btn-primary">@Localization["save"]</button>
+
+
+    </form>
+
+
+
+
+</div>

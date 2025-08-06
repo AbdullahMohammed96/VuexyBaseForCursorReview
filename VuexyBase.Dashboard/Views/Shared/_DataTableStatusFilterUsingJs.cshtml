@@ -1,0 +1,143 @@
+﻿@inject IStringLocalizer Localization
+
+@{
+    var selectedLength = ViewData["SelectedLength"]?.ToString() ?? "10";
+    var selectedStatus = ViewData["SelectedStatus"]?.ToString() ?? "";
+    var searchText = ViewData["SearchText"]?.ToString() ?? "";
+
+    var lengths = new[] { "10", "25", "50", "100" };
+
+
+
+}
+
+<div class="row g-3 mb-3 align-items-center" id="filter-controls">
+    <!-- Length Dropdown -->
+    <div class="col-auto">
+
+        <select name="datatable_length" id="length-filter" class="form-select form-select-sm">
+            @foreach (var length in lengths)
+            {
+                var isSelected = length == selectedLength ? "selected" : "";
+                @Html.Raw($"<option value=\"{length}\" {isSelected}>{length}</option>")
+            }
+        </select>
+
+
+        @* <select name="datatable_length" id="length-filter" class="form-select form-select-sm">
+            <option value="10" >10</option>
+            <option value="25" >25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select> *@
+    </div>
+
+    <!-- Search Box -->
+    <div class="col">
+        <input id="datatable-search" value="@searchText" type="search" class="form-control form-control-sm" placeholder="@Localization["Search"]..." />
+    </div>
+
+
+    <!-- Status Filter -->
+    <div class="col-auto">
+
+        <select id="status-filter" class="form-select form-select-sm">
+            @Html.Raw($"<option value=\"\" {(selectedStatus == "" ? "selected" : "")}>{Localization["All"]}</option>")
+            @Html.Raw($"<option value=\"True\" {(selectedStatus == "True" ? "selected" : "")}>{Localization["Active"]}</option>")
+            @Html.Raw($"<option value=\"False\" {(selectedStatus == "False" ? "selected" : "")}>{Localization["Disabled"]}</option>")
+        </select>
+
+        @* <select id="status-filter" class="form-select form-select-sm">
+            <option value="">@Localization["All"]</option>
+            <option value="True">@Localization["Active"]</option>
+            <option value="False">@Localization["Disabled"]</option>
+        </select> *@
+    </div>
+
+    <!-- Export Buttons -->
+    <div class="col-auto" id="datatable-buttons-placeholder"></div>
+
+    <!-- Add Button -->
+    <div class="col-auto">
+        <button type="button"
+                class="btn btn-sm btn-primary"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasAddData">
+            <i class="ti ti-plus me-1"></i> @Localization["AddNewSubCategory"]
+        </button>
+    </div>
+</div>
+
+<script>
+    function applyFilters() {
+        const length = document.getElementById("length-filter").value;
+        const search = document.getElementById("datatable-search").value;
+        const status = document.getElementById("status-filter").value;
+
+        const params = new URLSearchParams({
+            length: length,
+            search: search,
+            status: status
+        });
+
+        fetch(`/SubCategory/Filter?${params.toString()}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch filtered data");
+                }
+                return response.text(); // Expecting HTML partial
+            })
+            .then(html => {
+                document.querySelector("#table-container") = html;
+            })
+            .catch(error => {
+                console.error("Error loading filtered data:", error);
+            });
+    }
+
+    // Add event listeners
+    document.getElementById("length-filter").addEventListener("change", applyFilters);
+    document.getElementById("datatable-search").addEventListener("change", applyFilters);
+    document.getElementById("status-filter").addEventListener("input", function () {
+        clearTimeout(this._timer);
+        this._timer = setTimeout(applyFilters, 500);
+    });
+</script>
+
+
+<script>
+    function applyFilters() {
+        const length = document.getElementById("length-filter").value;
+        const search = document.getElementById("datatable-search").value;
+        const status = document.getElementById("status-filter").value;
+
+        const params = new URLSearchParams({
+            length: length,
+            search: search,
+            status: status
+        });
+
+        // Send HTMX request
+        htmx.ajax('GET', '/SubCategory/Filter', {
+            target: '#table-container',
+            swap: 'outerHTML',
+            values: {
+                length: length,
+                search: search,
+                status: status
+            }
+        });
+    }
+
+    // Add event listeners
+    document.getElementById("length-filter").addEventListener("change", applyFilters);
+    document.getElementById("datatable-search").addEventListener("change", applyFilters);
+    document.getElementById("status-filter").addEventListener("input", function () {
+        // Delay search to avoid sending many requests
+        clearTimeout(this._timer);
+        this._timer = setTimeout(applyFilters, 500);
+    });
+
+
+</script>
+

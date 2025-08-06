@@ -1,0 +1,106 @@
+﻿@using VuexyBase.Application.Application.Contracts.Application.Dashboard.SubCategory
+@using VuexyBase.Application.Application.ViewModels.SubCategory
+
+
+
+
+@model AddSubCategoryViewModel;
+
+<div id="form-create">
+    <form id="create-category-form" >
+
+
+        <div class="mb-3">
+            <label class="form-label">Name (EN)</label>
+            <input asp-for="NameEn" class="form-control add-input" />
+            <span asp-validation-for="NameEn"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Name (AR)</label>
+            <input asp-for="NameAr" type="text" class="form-control add-input" />
+            <span asp-validation-for="NameAr"></span>
+
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"> أختر التصنيف الأساسي التابع له هذا التصنيف</label>
+            <select class="form-select" asp-for="CategoryId" asp-items="@ViewBag.Categories">
+                <option value="0">أختر التصنيف</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Is Active</label>
+            <select class="form-select" asp-for="IsActive">
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
+            </select>
+        </div>
+
+       
+
+        <button id="submitbtn" type="submit" class="btn btn-primary me-sm-3 me-1"> @Localization["submit"]</button>
+
+        <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="offcanvas"> @Localization["cancel"]</button>
+
+    </form>
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("create-category-form");
+
+        form.addEventListener("submit", async function (event) {
+
+            // Prevents the browser's default form submission (which would reload the page).
+            event.preventDefault();
+
+            const submitButton = form.querySelector("button[type='submit']");
+            submitButton.disabled = true;
+
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch("@Url.Action("Create", "SubCategory")", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to submit the form");
+                }
+
+                const html = await response.text();
+
+                document.getElementById("form-create").innerHTML = html;
+
+                 const trigger = response.headers.get("HX-Trigger");
+                 console.log(trigger);
+
+
+                // Handle trigger logic
+                if (trigger === "subCategoryUpdated") {
+                    fetch('@Url.Action("GetTablePartial", "SubCategory")')
+                        .then(res => res.text())
+                        .then(html => document.getElementById("table-container").innerHTML = html);
+
+                    // Refresh form
+                    fetch('@Url.Action("GetAddTablePartial", "SubCategory")')
+                        .then(res => res.text())
+                        .then(html => document.getElementById("form-create").innerHTML = html);
+                        }
+
+                const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('offcanvasAddData'));
+                if (offcanvas) offcanvas.hide();
+
+            } catch (error) {
+                console.error("Submission error:", error);
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+    });
+</script>
+
