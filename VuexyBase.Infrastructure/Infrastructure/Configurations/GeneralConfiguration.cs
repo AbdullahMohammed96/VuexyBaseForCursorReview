@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text;
 using System.Threading.RateLimiting;
 using Autofac;
@@ -20,6 +20,8 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using VuexyBase.Application.Application.Contracts.Application.Countries;
 using VuexyBase.Application.Application.Contracts.Application.Dashboard.Auth;
 using VuexyBase.Application.Application.Contracts.Application.Dashboard.Category;
+using VuexyBase.Application.Application.Contracts.Application.Dashboard.Region;
+using VuexyBase.Application.Application.Contracts.Application.Dashboard.City;
 using VuexyBase.Application.Application.Contracts.Infrastructure.IO;
 using VuexyBase.Application.Application.Contracts.Infrastructure.Notifications.Firebase;
 using VuexyBase.Application.Application.Contracts.Infrastructure.SMS.FourJawaly;
@@ -27,6 +29,8 @@ using VuexyBase.Application.Application.DependencyInjection;
 using VuexyBase.Application.Application.Services.Countries;
 using VuexyBase.Application.Application.Services.Dashboard.Auth;
 using VuexyBase.Application.Application.Services.Dashboard.Category;
+using VuexyBase.Application.Application.Services.Dashboard.Region;
+using VuexyBase.Application.Application.Services.Dashboard.City;
 using VuexyBase.Application.Common.Extensions;
 using VuexyBase.Application.Common.Helpers;
 using VuexyBase.Application.Persistence;
@@ -127,6 +131,8 @@ namespace VuexyBase.Infrastructure.Configurations
             #endregion
 
           services.AddTransient<ICategoryService, CategoryService>();
+          services.AddTransient<IRegionService, RegionService>();
+          services.AddTransient<ICityService, CityService>();
 
         }
 

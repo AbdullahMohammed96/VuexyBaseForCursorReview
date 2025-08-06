@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using VuexyBase.Domain.Entities.Chats;
 using VuexyBase.Domain.Entities.Countries;
@@ -34,6 +34,8 @@ namespace VuexyBase.Application.Persistence
         public DbSet<AppInfo> AppInfos { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<SubCategory> SubCategories { get; set; }
+        public DbSet<Region> Regions { get; set; }
+        public DbSet<City> Cities { get; set; }
         public DbSet<LogException> LogExceptions { get; set; }
         public DbSet<Setting> Settings { get; set; }
 
@@ -75,6 +77,10 @@ namespace VuexyBase.Application.Persistence
             builder.Entity<Room>().HasQueryFilter(c => !c.IsDeleted);
 
             builder.Entity<Country>().HasQueryFilter(c => !c.isDeleted);
+
+            builder.Entity<Region>().HasQueryFilter(c => !c.IsDeleted);
+
+            builder.Entity<City>().HasQueryFilter(c => !c.IsDeleted);
 
             //Seeds
 
