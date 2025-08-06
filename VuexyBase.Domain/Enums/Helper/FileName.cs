@@ -1,4 +1,4 @@
-﻿namespace VuexyBase.Domain.Enums.Helper
+namespace VuexyBase.Domain.Enums.Helper
 {
     public enum FileName
     {
@@ -6,7 +6,8 @@
         City = 2,
         District = 3,
         User = 4,
-        Category = 5 ,
+        Category = 5,
+        Region = 6,
 
     }
 }
